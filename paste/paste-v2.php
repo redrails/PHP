@@ -1,6 +1,7 @@
 <?php
-  /*
-  * paste v2
+	/* Relevents pastie for t0by
+	 * #bitst0rm @ irc://I.R.CX:1337 
+	 * Settings:
 	 */
 
 	include("Parsedown.php");
@@ -50,27 +51,35 @@
 		file_put_contents($lastPFile,$id);
 		if($_POST['markdown'] == "yes"){
 			$Parsedown = new Parsedown();
-			$paste = $Parsedown->text(stripslashes(htmlspecialchars($_POST["paste"])));
+			$paste = $Parsedown->text($_POST["paste"]);
+			$paste = str_ireplace("<script", "&lt;script", $paste);
+			$paste = str_ireplace("</script>", "&lt;/script", $paste);
+			$paste = str_ireplace("<style", "&lt;style", $paste);
+			$paste = str_ireplace("</style>", "&lt;/style", $paste);
+			$paste = str_ireplace("<meta", "&lt;meta", $paste);
+			$paste = str_ireplace("<html", "&lt;html", $paste);
+			$paste = str_ireplace("<body", "&lt;body", $paste);
+			$paste = str_ireplace("<object", "&lt;object", $paste);
+			$paste = str_ireplace("<form", "&lt;form", $paste);
+			$paste = str_ireplace("<input", "&lt;input", $paste);
+			$paste = str_ireplace("<applet", "&lt;applet", $paste);
 		} else {
-			$paste = stripslashes(htmlspecialchars($_POST["paste"]));
+			$paste = stripslashes(htmlentities($_POST["paste"]));
+			$paste = "<pre><code>".$paste."</code></pre>";
 		}
 	
 		$html = <<<HTML
 		<html>
 			<head>
-				<style type="text/css">
-					body{
-						font-family:Calibri;
-						color:$tcolor;
-						background:$bcolor;
-					}
-				</style>
+
 				<title>paste $id</title>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/default.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+ 		<link href="http://ihtasham.com/paste/apply.css" rel="stylesheet">
+
 			</head>
-			<pre><code>$paste</code></pre>
+			$paste
 		</html>
 HTML;
 		mkdir("$directory/$id"); 
